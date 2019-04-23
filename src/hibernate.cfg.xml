@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+        <property name="connection.url">jdbc:sqlserver://localhost;database=MusalaSoft</property>
+        <property name="connection.driver_class">com.microsoft.sqlserver.jdbc.SQLServerDriver</property>
+        <property name="connection.password">b123412341234B</property>
+        <property name="connection.show_sql">true</property>
+        <property name="connection.username">sa</property>
+        <property name="show_sql">true</property>
+        <mapping class="com.bzahov.musalasoftDatabase.CommandState"/>
+        <mapping class="com.bzahov.musalasoftDatabase.Commands"/>
+        <mapping class="com.bzahov.musalasoftDatabase.Currencies"/>
+        <mapping class="com.bzahov.musalasoftDatabase.Customers"/>
+        <mapping class="com.bzahov.musalasoftDatabase.DeliveryType"/>
+        <mapping class="com.bzahov.musalasoftDatabase.OrderDetails"/>
+        <mapping class="com.bzahov.musalasoftDatabase.Order"/>
+        <mapping class="com.bzahov.musalasoftDatabase.PaymentType"/>
+        <mapping class="com.bzahov.musalasoftDatabase.ProductType"/>
+        <mapping class="com.bzahov.musalasoftDatabase.Products"/>
+        <mapping class="com.bzahov.musalasoftDatabase.ProductsProductTypes"/>
+       <!-- <mapping class="com.bzahov.musalasoftDatabase.States"/> -->
+        <mapping class="com.bzahov.musalasoftDatabase.Vendors"/>
+        <mapping class="com.bzahov.musalasoftDatabase.Shop"/>
+        <!-- <property name="connection.username"/> -->
+        <!-- <property name="connection.password"/> -->
+
+        <!-- DB schema will be updated if needed -->
+        <!-- <property name="hbm2ddl.auto">update</property> -->
+    </session-factory>
+</hibernate-configuration>
