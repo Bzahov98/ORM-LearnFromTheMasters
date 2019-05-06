@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+        <property name="connection.url">jdbc:sqlserver://localhost;database=Filmatics</property>
+        <property name="connection.driver_class">com.microsoft.sqlserver.jdbc.SQLServerDriver</property>
+        <property name="connection.username">sa</property>
+        <property name="connection.password">b123412341234B</property>
+        <property name="hibernate.hbm2ddl.auto">update</property>
+        <property name="show_sql">true</property>
+        <property name="hibernate.transaction.jta.platform">org.hibernate.service.jta.platform.internal.WeblogicJtaPlatform</property>
+        <mapping class="com.bzahov.OnlineFilmSystem.Entities.AccountEntity"/>
+        <mapping class="com.bzahov.OnlineFilmSystem.Entities.CategoriesEntity"/>
+        <mapping class="com.bzahov.OnlineFilmSystem.Entities.FilmsEntity"/>
+
+        <mapping class="com.bzahov.OnlineFilmSystem.deprecated.AccountFilmsEntity"/>
+        <mapping class="com.bzahov.OnlineFilmSystem.deprecated.FilmsCategoryEntity"/>
+
+        <!-- <property name="connection.username"/> -->
+        <!-- <property name="connection.password"/> -->
+
+        <!-- DB schema will be updated if needed -->
+        <!-- <property name="hbm2ddl.auto">update</property> -->
+    </session-factory>
+
+</hibernate-configuration>
