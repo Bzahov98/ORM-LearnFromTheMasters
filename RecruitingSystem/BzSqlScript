@@ -1,0 +1,36 @@
+RecruitmentSystem> create table "categories"(
+.................. id int IDENTITY primary key,
+.................. name varchar(255) not null,
+.................. info varchar(255) null);
+Commands completed successfully.
+Time: 0.403s
+RecruitmentSystem> create table "employer"(
+.................. id int IDENTITY primary key,
+.................. name varchar(255) not null,
+.................. info varchar(255) null);
+Commands completed successfully.
+Time: 0.253s
+RecruitmentSystem> create table "jobAds"(
+.................. id int IDENTITY primary key,
+.................. name varchar(255) not null,
+.................. info varchar(255) null,
+.................. employerID int null,
+.................. isActive bit DEFAULT 0);
+create table "records"(
+.................. id int IDENTITY primary key,
+.................. aplicantName varchar(255) not null,
+.................. info varchar(255) null,
+.................. jobAdsID int null,
+.................. isActive bit DEFAULT 0,
+.................. constraint FK_recordJobAds FOREIGN key (jobAdsID) REFERENC
+.................. ES jobAds(id));
+alter table "jobAds"
+.................. Add constraint FK_jobAdEmployee FOREIGN key (employerID) R
+.................. EFERENCES employer(id);
+
+Add constraint FK_jobAdEmployee FOREIGN key (employerID) REFERENCES e
+....... mployer(id);
+alter table "jobAds"
+.................. Add constraint FK_jobAdEmployee FOREIGN key (employerID) R
+.................. EFERENCES employer(id);
+alter table "jobAds" Add categoryID int null;
