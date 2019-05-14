@@ -4,7 +4,6 @@ import com.bzahov.exceptions.MyDataErrorException;
 
 import javax.persistence.*;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -12,7 +11,7 @@ import java.util.Set;
 public class EmployerEntity extends BaseEntity {
 	public static final int MAX_EMPLOYER_JOB_ADDS = 10;
 
-	private Integer jobAdsCount;
+	private Integer jobAdsCount = 0;
 	private Set<JobAdsEntity> jobAdsSet = new HashSet<>();
 
 	public EmployerEntity() { }
@@ -38,27 +37,13 @@ public class EmployerEntity extends BaseEntity {
 		this.jobAdsCount = jobAdsCount;
 	}
 
-	@OneToMany(cascade = CascadeType.ALL,mappedBy = "employer")
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "employer")
 	public Set<JobAdsEntity> getJobAdsSet() {
 		return jobAdsSet;
 	}
 
 	public void setJobAdsSet(Set<JobAdsEntity> jobAdsSet) {
 		this.jobAdsSet = jobAdsSet;
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (!(o instanceof EmployerEntity)) return false;
-		if (!super.equals(o)) return false;
-		EmployerEntity that = (EmployerEntity) o;
-		return Objects.equals(getJobAdsSet(), that.getJobAdsSet());
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(super.hashCode(), getJobAdsSet());
 	}
 
 	@Override
@@ -71,16 +56,34 @@ public class EmployerEntity extends BaseEntity {
 				'}';
 	}
 
-	public void addJobAdd(JobAdsEntity jobAdd) throws MyDataErrorException {
-		if (jobAdd.getActive()) {
-			if (jobAdsCount >= MAX_EMPLOYER_JOB_ADDS) {
-				MyDataErrorException myDataErrorException = new MyDataErrorException();
-				myDataErrorException.setMessage("try to add more than 10 active jobAds");
-				throw myDataErrorException;
+	public void addJobAdAndActivate(JobAdsEntity jobAdd) throws MyDataErrorException {
+		if (jobAdd.getIsActive()) {
+			if (this.jobAdsCount <= MAX_EMPLOYER_JOB_ADDS) {
+				if (!getJobAdsSet().contains(jobAdd)) {
+					this.getJobAdsSet().add(jobAdd);
+					if (jobAdd.getEmployer() != this) {
+						jobAdd.addEmployer(this);
+					}
+					jobAdd.activateJobAd();
+				}
 			} else {
-				getJobAdsSet().add(jobAdd);
-				jobAdsCount++;
+				MyDataErrorException myDataErrorException = new MyDataErrorException();
+				myDataErrorException.setMessage("you try to add more than 10 active jobAds");
+				throw myDataErrorException;
 			}
+		}
+	}
+
+	public void removeJobAd(JobAdsEntity jobAdd) throws MyDataErrorException {
+
+		if (!(getJobAdsSet().contains(jobAdd) && jobAdd.getEmployer() == this)) {
+			this.getJobAdsSet().remove(jobAdd);
+			jobAdd.deactivateJobAd();
+			System.out.println("\nremoved job ad"+ jobAdd.getName() +" successful");
+		} else {
+			MyDataErrorException myDataErrorException = new MyDataErrorException();
+			myDataErrorException.setMessage(" this job ad is not owned by this employer");
+			throw myDataErrorException;
 		}
 	}
 }

@@ -21,7 +21,6 @@ create table "records"(
 .................. aplicantName varchar(255) not null,
 .................. info varchar(255) null,
 .................. jobAdsID int null,
-.................. isActive bit DEFAULT 0,
 .................. constraint FK_recordJobAds FOREIGN key (jobAdsID) REFERENC
 .................. ES jobAds(id));
 alter table "jobAds"

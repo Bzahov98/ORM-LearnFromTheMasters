@@ -19,23 +19,30 @@ public class RecordsFactory {
 
 	public static RecordsEntity createRecordEntity(String name, String applicantName, String info, JobAdsEntity jobAd) throws MyDataErrorException {
 		Session session = SessionHolder.getSession();
+		RecordsEntity record = null;
+		try {
+			//if (isActive == null) isActive = false;
+			if (info == null) info = "";
+			if (name == null) throw new MyDataErrorException();
+			session.beginTransaction();
+			record = new RecordsEntity(name, applicantName, info);
+			record.addRecordToJobAd(jobAd);
 
-		//if (isActive == null) isActive = false;
-		if (info == null) info = "";
-		if (name == null) throw new MyDataErrorException();
-
-		session.beginTransaction();
-
-		RecordsEntity record = new RecordsEntity(name, applicantName, info);
-
-		record.addRecordToJobAd(jobAd);
-
+		} catch (Exception e) {
+			System.err.println("\nException was catched in create Record Entity");
+			if (session.getTransaction() != null) {
+				session.getTransaction().rollback();
+				return null;
+			}
+		}
 		session.save(record);
-		session.getTransaction().commit();
+		if (session.getTransaction().isActive()) {
+			session.getTransaction().commit();
+		}    //session.getTransaction().commit();
 		return record;
 	}
 
-	public static void addRecordToJobAd(RecordsEntity record,JobAdsEntity jobAd) throws MyDataErrorException {
+	public static void addRecordToJobAd(RecordsEntity record, JobAdsEntity jobAd) throws MyDataErrorException {
 
 		Session session = SessionHolder.getSession();
 		if (jobAd != null) {
@@ -46,7 +53,7 @@ public class RecordsFactory {
 			} else {
 				//throw new MyDataErrorException();
 			}
-			record.setJobAds(jobAd);
+			record.setJobAd(jobAd);
 		}
 		session.save(record);
 		session.getTransaction().commit();

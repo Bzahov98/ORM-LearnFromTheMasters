@@ -18,15 +18,31 @@ public class EmployerFactory {
 	}
 
 	public static EmployerEntity createEmployerEntity(String name, String info, Set<JobAdsEntity> jobAdsSet) throws MyDataErrorException {
-		if (name == null) throw new MyDataErrorException();
-		EmployerEntity employer = new EmployerEntity(name, info);
-		employer.setJobAdsCount(0);
-		if (jobAdsSet!= null){
-		for (JobAdsEntity jobAdsEntity : jobAdsSet) {
-			employer.addJobAdd(jobAdsEntity);
-		}}
-		//employer.addJobAdd(jobAdsSet);
-		//addJobAddToEmployer(jobAdsSet, employer);
+		Session session = SessionHolder.getSession();
+		EmployerEntity employer = null;
+		try {
+			session.getTransaction();
+			if (name == null) throw new MyDataErrorException();
+			employer = new EmployerEntity(name, info);
+			employer.setJobAdsCount(0);
+			if (jobAdsSet != null) {
+				for (JobAdsEntity jobAdsEntity : jobAdsSet) {
+					employer.addJobAdAndActivate(jobAdsEntity);
+				}
+			}
+			//employer.addJobAdAndActivate(jobAdsSet);
+			//addJobAddToEmployer(jobAdsSet, employer);
+		} catch (Exception e) {
+			System.err.println("\nException was catched in create Employer Entity");
+			if (session.getTransaction() != null) {
+				session.getTransaction().rollback();
+				return null;
+			}
+		}
+		session.save(employer);
+		if (session.getTransaction().isActive()) {
+			session.getTransaction().commit();
+		}    //session.getTransaction().commit();
 		return employer;
 	}
 
@@ -37,9 +53,9 @@ public class EmployerFactory {
 		if (jobAdsSet != null) {
 
 			for (JobAdsEntity jobAd : jobAdsSet) {
-				employer.addJobAdd(jobAd);
+				employer.addJobAdAndActivate(jobAd);
 				for (JobAdsEntity jobEntity : jobAdsSet) {
-					jobEntity.setEmployer(employer);
+					jobEntity.addEmployer(employer);
 				}
 			}
 			employer.setJobAdsCount(jobAdsSet.size());

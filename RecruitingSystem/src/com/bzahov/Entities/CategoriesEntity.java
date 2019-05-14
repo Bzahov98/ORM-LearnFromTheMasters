@@ -1,5 +1,7 @@
 package com.bzahov.Entities;
 
+import com.bzahov.exceptions.MyDataErrorException;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
@@ -10,7 +12,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "categories", schema = "dbo", catalog = "RecruitmentSystem")
-public class CategoriesEntity extends BaseEntity{
+public class CategoriesEntity extends BaseEntity {
 
 	private Set<JobAdsEntity> jobAdsSet = new HashSet<>();
 
@@ -21,13 +23,41 @@ public class CategoriesEntity extends BaseEntity{
 
 	public CategoriesEntity() {}
 
-	@OneToMany(cascade = CascadeType.ALL,mappedBy = "category")
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "category")
 	public Set<JobAdsEntity> getJobAdsSet() {
 		return jobAdsSet;
 	}
 
-	public void setJobAdsSet(Set<JobAdsEntity> jobAdsSet) {
+	public void setJobAdsSet(Set<JobAdsEntity> jobAdsSet) throws MyDataErrorException {
 		this.jobAdsSet = jobAdsSet;
+	}
+
+	public void addJobAdSetToCategory(Set<JobAdsEntity> newJobAdsSet) throws MyDataErrorException {
+		if (newJobAdsSet != null) {
+			//this.jobAdsSet = newJobAdsSet;
+			for (JobAdsEntity jobEntity : jobAdsSet) {
+				//jobEntity.addCategory(this);
+				addJobAdToCategory(jobEntity);
+			}
+		} else {
+			System.err.println("error in setJobAdsSet");
+			throw new MyDataErrorException();
+		}
+	}
+
+	public void addJobAdToCategory(JobAdsEntity newJobAd) throws MyDataErrorException {
+		if (newJobAd != null) {
+			if (getJobAdsSet() == null) {
+				HashSet<JobAdsEntity> jobAdsEntities = new HashSet<>();
+				jobAdsEntities.add(newJobAd);
+				setJobAdsSet(jobAdsEntities);
+			}else getJobAdsSet().add(newJobAd);
+
+			newJobAd.addCategory(this);
+		} else {
+			System.err.println("error in setJobAdsSet");
+			throw new MyDataErrorException();
+		}
 	}
 
 	@Override

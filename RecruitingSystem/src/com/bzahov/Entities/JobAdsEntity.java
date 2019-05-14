@@ -13,21 +13,25 @@ public class JobAdsEntity extends BaseEntity {
 	private CategoriesEntity category;
 	private EmployerEntity employer;
 	private Set<RecordsEntity> recordsSet = new HashSet<>();
+	protected int id;
+	protected String name = "default";
+	protected String info = "no description";
+
 
 	public JobAdsEntity() { }
 
-	public JobAdsEntity(String name, String info, Boolean isActive, CategoriesEntity category) {
+	public JobAdsEntity(String name, String info, Boolean isActive, CategoriesEntity category) throws MyDataErrorException {
 		super(name, info);
 		this.isActive = isActive;
-		this.category = category;
+		setCategory(category);
 	}
 
-	public JobAdsEntity(String name, String info, Boolean isActive, CategoriesEntity category, EmployerEntity employer, Set<RecordsEntity> recordsSet) {
+	public JobAdsEntity(String name, String info, Boolean isActive, CategoriesEntity category, EmployerEntity employer, Set<RecordsEntity> recordsSet) throws MyDataErrorException {
 		super(name, info);
 		this.isActive = isActive;
-		this.category = category;
-		this.employer = employer;
-		this.recordsSet = recordsSet;
+		setCategory(category);
+		setEmployer(employer);
+		setRecordsSet(recordsSet);
 	}
 
 	public JobAdsEntity(String name, String info, Boolean isActive) {
@@ -35,34 +39,43 @@ public class JobAdsEntity extends BaseEntity {
 		this.isActive = isActive;
 	}
 
-	public void registerRecord(RecordsEntity record) throws MyDataErrorException {
-		if (!getRecordsSet().contains(record)) {
-			this.getRecordsSet().add(record);
-			record.setJobAds(this);
-		} else {
-			System.out.println("alreadyRegistred that record");
-			throw new MyDataErrorException();
-		}
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id", nullable = false)
+	public int getId() {
+		return id;
 	}
 
-	public void registerRecordSet(Set<RecordsEntity> records) throws MyDataErrorException {
-		records.forEach(record -> {
-			if(!getRecordsSet().contains(record)){
-				this.getRecordsSet().add(record);
-				record.setJobAds(this);
-			} else{
-				System.out.println("alreadyRegistered that record");
-			}
-		});
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	@Basic
-	@Column(name = "IsActive")
-	public boolean getActive() {
+	@Column(name = "name", nullable = false, length = 255)
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	@Basic
+	@Column(name = "info", nullable = true, length = 255)
+	public String getInfo() {
+		return info;
+	}
+
+	public void setInfo(String info) {
+		this.info = info;
+	}
+
+	@Column(name = "isActive", columnDefinition = "BIT")
+	public boolean getIsActive() {
 		return isActive;
 	}
 
-	public void setActive(boolean active) {
+	public void setIsActive(boolean active) {
 		isActive = active;
 	}
 
@@ -72,8 +85,24 @@ public class JobAdsEntity extends BaseEntity {
 		return category;
 	}
 
-	public void setCategory(CategoriesEntity categories) {
-		this.category = categories;
+	public void setCategory(CategoriesEntity category) throws MyDataErrorException {
+			this.category = category;
+	}
+
+	public void addCategory(CategoriesEntity category) throws MyDataErrorException{
+		if (category != null) {
+			this.category = category;
+		}else throw new MyDataErrorException();
+	}
+	@Deprecated
+	public void setCategoryOfAllJobAds(CategoriesEntity category) throws MyDataErrorException {
+		if (category != null) {
+			this.addCategory(category);
+			for (JobAdsEntity jobAdsEntity : category.getJobAdsSet()) {
+				jobAdsEntity.addCategory(this.category);
+				System.out.println("set jobads to category " + category.getName());
+			}
+		} else throw new MyDataErrorException();
 	}
 
 	@ManyToOne(cascade = CascadeType.ALL)
@@ -82,28 +111,64 @@ public class JobAdsEntity extends BaseEntity {
 		return employer;
 	}
 
-	// todo
-	public void setEmployer(EmployerEntity employer) throws MyDataErrorException {
-		if (employer == null) {
-			System.err.println("employer null\n");
-			return;
-		}
-		if (employer.getJobAdsCount() <= 10) {
-			this.employer = employer;
-			employer.addJobAdd(this);
-		} else {
-			System.err.println("\ntoo much accounts");
-			throw new MyDataErrorException();
-		}
-	}
-
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "jobAds")
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "jobAd")
 	public Set<RecordsEntity> getRecordsSet() {
 		return recordsSet;
 	}
 
-	public void setRecordsSet(Set<RecordsEntity> recordsSet) {
+	public void setRecordsSet(Set<RecordsEntity> recordsSet){
 		this.recordsSet = recordsSet;
+	}
+
+	public void registerRecord(RecordsEntity record) throws MyDataErrorException {
+		if (record == null) {
+			System.err.println("in JobAds register record is null");
+			throw new MyDataErrorException();
+		}
+		if (!getRecordsSet().contains(record)) {
+			this.getRecordsSet().add(record);
+			record.setJobAd(this);
+		} else {
+			System.out.println("alreadyRegistred that record");
+			throw new MyDataErrorException();
+		}
+	}
+
+	public void registerRecordSet(Set<RecordsEntity> records) throws MyDataErrorException {
+		if (records == null) {
+			System.err.println("in JobAds register record is null");
+			return;
+		}
+		for (RecordsEntity record : records) {
+			this.registerRecord(record);
+			/*if (!getRecordsSet().contains(record)) {
+				this.getRecordsSet().add(record);
+				record.setJobAd(this);
+			} else {
+				System.out.println("alreadyRegistered that record");
+			}*/
+		}
+	}
+
+	// todo
+	public void setEmployer(EmployerEntity employer) throws MyDataErrorException {
+		this.employer = employer;
+	}
+
+	public void addEmployer(EmployerEntity employer) throws MyDataErrorException{
+		if (employer == null) {
+			System.err.println("\nemployer null\n");
+			return;
+		}
+		if (employer.getJobAdsCount() <= 10) {
+			this.employer = employer;
+			if (!employer.getJobAdsSet().contains(this)) {
+				employer.addJobAdAndActivate(this);
+			}
+		} else {
+			System.err.println("\ntoo much accounts");
+			throw new MyDataErrorException();
+		}
 	}
 
 	@Override
@@ -118,4 +183,15 @@ public class JobAdsEntity extends BaseEntity {
 				", info='" + info + '\'' +
 				'}';
 	}
+
+	public void activateJobAd(){
+		setIsActive(true);
+		this.employer.setJobAdsCount(this.employer.getJobAdsCount()+1);
+	}
+
+	public void deactivateJobAd(){
+		setIsActive(false);
+		this.employer.setJobAdsCount(this.employer.getJobAdsCount()-1);
+	}
+
 }

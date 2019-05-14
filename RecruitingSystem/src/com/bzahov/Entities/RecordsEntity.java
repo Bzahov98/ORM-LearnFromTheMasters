@@ -10,17 +10,16 @@ import java.util.Set;
 @Table(name = "records", schema = "dbo", catalog = "RecruitmentSystem")
 public class RecordsEntity extends BaseEntity{
 	private String applicantName;
-	//private Boolean isActive;
-	private JobAdsEntity jobAds;
+	private JobAdsEntity jobAd;
 
 
 	public RecordsEntity() {	}
 
-	public RecordsEntity(String recordsName,String applicantName, String info, JobAdsEntity jobAds) {
+	public RecordsEntity(String recordsName,String applicantName, String info, JobAdsEntity jobAd) {
 		super(recordsName,info);
 		this.applicantName = applicantName;
 		/*this.isActive = isActive;*/
-		this.jobAds = jobAds;
+		this.jobAd = jobAd;
 	}
 
 	public RecordsEntity(String recordsName, String applicantName, String info) {
@@ -30,33 +29,23 @@ public class RecordsEntity extends BaseEntity{
 	}
 
 	@Basic
-	@Column(name = "aplicantName", nullable = false, length = 255)
+	@Column(name = "applicantName", nullable = false, length = 255)
 	public String getApplicantName() {
 		return applicantName;
 	}
 
-	public void setApplicantName(String aplicantName) {
-		this.applicantName = aplicantName;
+	public void setApplicantName(String applicantName) {
+		this.applicantName = applicantName;
 	}
 
-	/*@Basic
-	@Column(name = "isActive", nullable = true)
-	public Boolean getActive() {
-		return isActive;
-	}
-
-	public void setActive(Boolean active) {
-		isActive = active;
-	}
-*/
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "jobAdsID")
-	public JobAdsEntity getJobAds() {
-		return jobAds;
+	public JobAdsEntity getJobAd() {
+		return jobAd;
 	}
 
-	public void setJobAds(JobAdsEntity jobAds) {
-		this.jobAds = jobAds;
+	public void setJobAd(JobAdsEntity jobAds) {
+		this.jobAd = jobAds;
 	}
 
 	@Override
@@ -67,20 +56,19 @@ public class RecordsEntity extends BaseEntity{
 		RecordsEntity that = (RecordsEntity) o;
 		return Objects.equals(getApplicantName(), that.getApplicantName()) &&
 				/*Objects.equals(isActive, that.isActive) &&*/
-				Objects.equals(getJobAds(), that.getJobAds());
+				Objects.equals(getJobAd(), that.getJobAd());
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(super.hashCode(), getApplicantName()/*, isActive*/, getJobAds());
+		return Objects.hash(super.hashCode(), getApplicantName()/*, isActive*/, getJobAd());
 	}
 
 	@Override
 	public String toString() {
 		return "RecordsEntity{" +
 				"applicantName='" + applicantName + '\'' +
-				/*", isActive=" + isActive +*/
-				", jobAds=" + jobAds +
+				", jobAds=" + jobAd +
 				", id=" + id +
 				", name='" + name + '\'' +
 				", info='" + info + '\'' +
@@ -92,10 +80,11 @@ public class RecordsEntity extends BaseEntity{
 			Set<RecordsEntity> recordsSet = jobAd.getRecordsSet();
 			if (!recordsSet.contains(this)) {
 				recordsSet.add(this);
+				setJobAd(jobAd);
 			} else {
-				//throw new MyDataErrorException();
+				System.err.println("\nRecord already in jobAd list");
+				throw new MyDataErrorException();
 			}
-			this.setJobAds(jobAd);
 		}
 	}
 }
