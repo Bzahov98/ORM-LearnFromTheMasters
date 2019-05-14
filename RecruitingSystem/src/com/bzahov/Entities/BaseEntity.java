@@ -27,7 +27,7 @@ public abstract class BaseEntity {
 	}
 
 	@Basic
-	@Column(name = "name", nullable = false, length = 255)
+	@Column(name = "name", length = 255)
 	public String getName() {
 		return name;
 	}
@@ -37,7 +37,7 @@ public abstract class BaseEntity {
 	}
 
 	@Basic
-	@Column(name = "info", nullable = true, length = 255)
+	@Column(name = "info", length = 255)
 	public String getInfo() {
 		return info;
 	}

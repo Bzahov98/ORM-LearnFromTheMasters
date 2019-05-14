@@ -1,5 +1,5 @@
 import com.bzahov.Factories.RecordsFactory;
-import com.bzahov.Utils.ByCategory;
+import com.bzahov.Utils.DemoClass;
 import com.bzahov.Utils.SessionHolder;
 import org.hibernate.Session;
 
@@ -11,6 +11,13 @@ public class Main {
 		//ByCategory.findTopRankings();
 		//session.beginTransaction();
 		try {
+			DemoClass.objectDemoCreationWithoutReferences();
+			DemoClass.objectDemoCreationWithReferences();
+			DemoClass.demoMaxJobAdsPerEmployerError();
+			DemoClass.queriesDemoCreation();
+			DemoClass.demoMultipleRecordsOnOneJobAddError();
+
+
 			//CategoriesEntity category = CategoryFactory.createCategory("QA2", "bla bla");
 			/*EmployerEntity employer = EmployerFactory.createEmployer("MusalaSoft", "bla bla");
 			JobAdsEntity jobAdsEntity = JobAdsFactory.createJobAd("Dev Job11","info",true);
@@ -66,7 +73,7 @@ public class Main {
 			//recordsEntity.addRecordToJobAd(jobAdsEntity);
 			//EmployerFactory.addJobAddToEmployer(jobAdsEntityList,employer);
 
-			ByCategory.findActiveCategoriesCount();
+			/*ByCategory.findActiveCategoriesCount();
 			System.out.println("\n");
 			ByCategory.findPeopleCountPerProfession();
 			/*

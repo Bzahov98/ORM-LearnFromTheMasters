@@ -14,8 +14,8 @@ public class JobAdsEntity extends BaseEntity {
 	private EmployerEntity employer;
 	private Set<RecordsEntity> recordsSet = new HashSet<>();
 	protected int id;
-	protected String name = "default";
-	protected String info = "no description";
+	protected String name;
+	protected String info;
 
 
 	public JobAdsEntity() { }
@@ -36,6 +36,8 @@ public class JobAdsEntity extends BaseEntity {
 
 	public JobAdsEntity(String name, String info, Boolean isActive) {
 		super(name, info);
+		this.name = name;
+		this.info = info;
 		this.isActive = isActive;
 	}
 
@@ -166,7 +168,7 @@ public class JobAdsEntity extends BaseEntity {
 				employer.addJobAdAndActivate(this);
 			}
 		} else {
-			System.err.println("\ntoo much accounts");
+			System.err.println("\n too much accounts");
 			throw new MyDataErrorException();
 		}
 	}

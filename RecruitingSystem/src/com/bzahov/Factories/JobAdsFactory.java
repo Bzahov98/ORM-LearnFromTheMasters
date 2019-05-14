@@ -55,7 +55,7 @@ public class JobAdsFactory {
 				jobAdsEntity.registerRecordSet(recordsSet);
 			}
 			if (employer != null) {
-				//System.out.println("aaaa");
+
 				employer.addJobAdAndActivate(jobAdsEntity);
 			}
 			if (category != null) {
