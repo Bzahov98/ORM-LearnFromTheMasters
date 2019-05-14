@@ -77,32 +77,40 @@ public class JobAdsFactory {
 		return jobAdsEntity;
 	}
 
-		public static void setJobAdsEntityToRecord (Set < RecordsEntity > recordsSet, JobAdsEntity jobAdsEntity) throws
-		MyDataErrorException {
+	public static void setJobAdsEntityToRecord(Set<RecordsEntity> recordsSet,
+											   JobAdsEntity jobAdsEntity) {
+		Session session = SessionHolder.getSession();
+		try {
+			session.beginTransaction();
 			if (recordsSet != null) {
 
-				jobAdsEntity.setRecordsSet(recordsSet);
-				recordsSet.forEach(recordsEntity ->
-						recordsEntity.setJobAd(jobAdsEntity));
+				for (RecordsEntity recordsEntity : recordsSet) {
+					recordsEntity.addRecordToJobAd(jobAdsEntity);
+				}
 			}
-		}
-
-		public static void setJobAdToCategory (CategoriesEntity category, JobAdsEntity jobAdsEntity) throws
-		MyDataErrorException {
-			if (category != null && jobAdsEntity != null) {
-				jobAdsEntity.addCategory(category);
-				category.getJobAdsSet().add(jobAdsEntity);
-			} else System.err.println("error in job ad to category");
-			;
-		}
-
-		public static void setEmployerOfJobAd (EmployerEntity employer, JobAdsEntity jobAdsEntity) throws
-		MyDataErrorException {
-			if (employer != null) {
-				employer.addJobAdAndActivate(jobAdsEntity);
-				jobAdsEntity.setEmployer(employer);
-			} else System.err.println("error in set employer to jobAd");
-		}
-
-
+		} catch (Exception e) {
+			e.printStackTrace();
+			session.getTransaction().rollback();
+			return;
+		}session.getTransaction().commit();
 	}
+
+	public static void setJobAdToCategory(CategoriesEntity category, JobAdsEntity jobAdsEntity) throws
+			MyDataErrorException {
+		if (category != null && jobAdsEntity != null) {
+			jobAdsEntity.addCategory(category);
+			category.getJobAdsSet().add(jobAdsEntity);
+		} else System.err.println("error in job ad to category");
+		;
+	}
+
+	public static void setEmployerOfJobAd(EmployerEntity employer, JobAdsEntity jobAdsEntity) throws
+			MyDataErrorException {
+		if (employer != null) {
+			employer.addJobAdAndActivate(jobAdsEntity);
+			jobAdsEntity.setEmployer(employer);
+		} else System.err.println("error in set employer to jobAd");
+	}
+
+
+}

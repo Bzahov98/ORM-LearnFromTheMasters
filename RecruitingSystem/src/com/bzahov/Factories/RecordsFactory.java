@@ -21,13 +21,13 @@ public class RecordsFactory {
 		Session session = SessionHolder.getSession();
 		RecordsEntity record = null;
 		try {
-			//if (isActive == null) isActive = false;
-			if (info == null) info = "";
+			if (info == null) info = "no description";
 			if (name == null) throw new MyDataErrorException();
 			session.beginTransaction();
 			record = new RecordsEntity(name, applicantName, info);
-			record.addRecordToJobAd(jobAd);
-
+			if (jobAd!= null) {
+				record.addRecordToJobAd(jobAd);
+			}
 		} catch (Exception e) {
 			System.err.println("\nException was catched in create Record Entity");
 			if (session.getTransaction() != null) {

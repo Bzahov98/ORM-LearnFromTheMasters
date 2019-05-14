@@ -1,6 +1,7 @@
 package com.bzahov.Entities;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @MappedSuperclass
 public abstract class BaseEntity {
@@ -44,5 +45,19 @@ public abstract class BaseEntity {
 
 	public void setInfo(String info) {
 		this.info = info;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof BaseEntity)) return false;
+		BaseEntity that = (BaseEntity) o;
+		return getId() == that.getId() &&
+				Objects.equals(getName(), that.getName());
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(getId(), getName());
 	}
 }

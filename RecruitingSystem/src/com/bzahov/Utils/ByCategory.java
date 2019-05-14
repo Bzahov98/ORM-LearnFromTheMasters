@@ -53,8 +53,9 @@ public class ByCategory {
 
 		//printResult
 		TypedQuery<Object[]> typedQuery = session.createQuery(query).setMaxResults(50);
+		System.err.println("v> [Category name, Job Ads total count] v<");
 		typedQuery.getResultList().forEach(object -> {
-			System.out.println(">> " + Arrays.toString(object));
+			System.out.println(">>" + Arrays.toString(object));
 		});
 	}
 
@@ -76,9 +77,8 @@ public class ByCategory {
 		Root<RecordsEntity> records = query.from(RecordsEntity.class);
 
 		// select
-		query.multiselect(builder.count(records.get("id")), jobRoot.get("name"));
+		query.multiselect(jobRoot.get("name"),builder.count(records.get("id")));
 
-		//where is active
 		//join condition
 		Predicate joinCond
 				= builder.equal(jobRoot.get("id"),records.get("jobAd"));
@@ -91,17 +91,18 @@ public class ByCategory {
 		query.orderBy(builder.desc (
 				builder.count(records.get("id")))
 		);
-
 		//printResult*/
 		TypedQuery<Object[]> typedQuery = session.createQuery(query).setMaxResults(50);
+		System.err.println("v> [Job name, People total count] v<");
 		typedQuery.getResultList().forEach(object -> {
-			System.out.println(">> " + Arrays.toString(object) + "\n");
+			System.out.println(">> " + Arrays.toString(object));
 		});
+		//System.err.println("^> [Job name, People total count]");
 	}
 
 	@Deprecated
 	public static void findActiveCategoriesAndPeopleCount() {
-		//и колко хора са кандидствали по всяка професия (QA, Developer, Manager, DevOps
+		//колко хора са кандидствали по всяка професия (QA, Developer, Manager, DevOps
 		Session session = SessionHolder.getSession();
 		CriteriaBuilder builder = session.getCriteriaBuilder();
 

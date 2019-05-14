@@ -18,7 +18,7 @@ RecruitmentSystem> create table "jobAds"(
 .................. isActive bit DEFAULT 0);
 create table "records"(
 .................. id int IDENTITY primary key,
-.................. aplicantName varchar(255) not null,
+.................. applicantName varchar(255) not null,
 .................. info varchar(255) null,
 .................. jobAdsID int null,
 .................. constraint FK_recordJobAds FOREIGN key (jobAdsID) REFERENC

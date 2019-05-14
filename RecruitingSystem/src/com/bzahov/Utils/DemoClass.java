@@ -16,11 +16,14 @@ import java.util.stream.IntStream;
 
 public class DemoClass {
 	public static void objectDemoCreationWithoutReferences() throws MyDataErrorException {
-
-		CategoriesEntity category = CategoryFactory.createCategory("Demo QA", "bla bla");
-		EmployerEntity employer = EmployerFactory.createEmployer("Demo1", "bla bla");
-		JobAdsEntity jobAd = JobAdsFactory.createJobAd("Dev Demo1", "info", true);
-		RecordsEntity record = RecordsFactory.createRecord("demoRecord", "Mr.Demo");
+		try {
+			CategoryFactory.createCategory("Demo QA", "bla bla");
+			EmployerFactory.createEmployer("Demo1", "bla bla");
+			JobAdsFactory  .createJobAd   ("Dev Demo1", "info", true);
+			RecordsFactory .createRecord  ("demoRecord", "Mr.Demo");
+		}catch (Exception e){
+			e.printStackTrace();
+		}
 	}
 
 	public static void objectDemoCreationWithReferences() throws MyDataErrorException {
@@ -41,9 +44,13 @@ public class DemoClass {
 				}
 			});
 
-			JobAdsEntity jobAdsEntity = JobAdsFactory.createJobAdWithAllRelations("Develop Job11211",
-					"infso", true, category, employer, recordsEntitySet);
+			JobAdsEntity jobAdsEntity = JobAdsFactory.createJobAdWithAllRelations(
+					"Dev    elop Job11211", "infso", true
+					, category, employer, recordsEntitySet
+			);
+
 		} catch (Exception e) {
+			e.printStackTrace();
 			return;
 		}
 		System.out.println("successfully added jobAds Entity with all relations ");
@@ -57,13 +64,13 @@ public class DemoClass {
 			IntStream.range(0, 11).forEach(value -> {
 				try {
 					jobAdsEntityList.add(
-							JobAdsFactory.createJobAd("Demo Junior Dev Job" + value, "info" + value, true)
+							JobAdsFactory.createJobAd("Demo Junior Dev Job" + value
+													, "info" + value, true)
 					);
 				} catch (MyDataErrorException e) {
 					e.printStackTrace();
 				}
 			});
-
 			System.out.println("\n size of Entity list " + jobAdsEntityList.size());
 
 			EmployerEntity employer = EmployerFactory.createEmployer("Demo1", "bla bla");
@@ -74,27 +81,30 @@ public class DemoClass {
 		}
 	}
 
-	public static void queriesDemoCreation() {
-		System.out.println("\nQueries demo: findActiveCategoriesCount");
-		ByCategory.findActiveCategoriesCount();
-		System.out.println("\nQueries demo: findPeopleCountPerProfession");
-		ByCategory.findPeopleCountPerProfession();
+	public static void demoMultipleRecordsOnOneJobAddError() {
+		try {
+			RecordsEntity record = RecordsFactory.createRecord("demoRecord7", "Mr.Demo7");
+			JobAdsEntity jobAd = JobAdsFactory.createJobAd("Dev Demo7", "info7", true);
+
+			Set<RecordsEntity> jobAdsEntityList = new HashSet<>();
+			jobAdsEntityList.add(record);
+
+			JobAdsFactory.setJobAdsEntityToRecord(jobAdsEntityList,jobAd);
+			JobAdsFactory.setJobAdsEntityToRecord(jobAdsEntityList,jobAd);
+		} catch (Exception e) {
+			//e.printStackTrace();
+			System.out.println("\n>> Found Expected error");
+		}
 
 	}
 
-	public static void demoMultipleRecordsOnOneJobAddError() {
-		/*try {
-			RecordsEntity record = RecordsFactory.createRecord("demoRecord", "Mr.Demo");
-			JobAdsEntity jobAd = JobAdsFactory.createJobAd("Dev Demo1", "info", true);
-			record.addRecordToJobAd(jobAd);
-			Set<JobAdsEntity> jobAdsEntityList = new HashSet<>();
+	public static void queriesDemoCreation() {
 
-			JobAdsFactory.setJobAdsEntityToRecord(addJobAddToEmployer(jobAdsEntityList,);
-			record.addRecordToJobAd(jobAd);
-		} catch (MyDataErrorException e) {
-			e.printStackTrace();
-			System.out.println("found Expected error");
-		}
-*/
+		System.out.println("\nQueries demo: findActiveCategoriesCount");
+		ByCategory.findActiveCategoriesCount();
+
+		System.out.println("\nQueries demo: findPeopleCountPerProfession");
+		ByCategory.findPeopleCountPerProfession();
+
 	}
 }
